@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tuesday Movies</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://ai-public.creatie.ai/gen_page/tailwind-custom.css" rel="stylesheet">
+    <script
+        src="https://cdn.tailwindcss.com/3.4.5?plugins=forms@0.5.7,typography@0.5.13,aspect-ratio@0.4.2,container-queries@0.1.1"></script>
+    <script src="https://ai-public.creatie.ai/gen_page/tailwind-config.min.js" data-color="#000000"
+        data-border-radius="small"></script>
+    <style>
+        /* Enhanced Styles for Movie Cards */
+        .movie-card:hover .movie-details {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .movie-details {
+            transition: opacity 0.3s ease, transform 0.3s ease;
+            opacity: 0;
+            transform: translateY(10px);
+        }
+
+        /* Custom Icons for Genres */
+        .genre-icon {
+            width: 24px;
+            height: 24px;
+            display: inline-block;
+            margin-right: 8px;
+            background-size: contain;
+            background-repeat: no-repeat;
+        }
+
+        .genre-action {
+            background-image: url('path/to/action-icon.svg');
+        }
+
+        .genre-comedy {
+            background-image: url('path/to/comedy-icon.svg');
+        }
+
+        /* Add more genre styles as needed */
+
+        /* Drag and Drop Area */
+        #dropArea {
+            border: 2px dashed #ccc;
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            margin-bottom: 20px;
+            background-color: #f8f8f8;
+            cursor: pointer;
+        }
+
+        #dropArea.highlight {
+            background-color: #e0e0e0;
+        }
+    </style>
+</head>
+
+<body class="bg-gray-900 text-white font-montserrat">
+    <nav class="fixed w-full z-50 bg-gray-900/95 backdrop-blur-sm border-b border-gray-800">
+        <div class="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center">
+                    <img src="Images/TMLogo.svg" alt="Logo" class="h-12 w-auto">
+                    <span class="ml-3 text-xl font-bold typewriter">Tuesday Movies</span>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <!-- Responsive Search Bar -->
+                    <input type="text" id="searchInput" placeholder="Search movies..."
+                        class="px-4 py-2 rounded-md bg-gray-800 text-white focus:outline-none focus:ring-2 focus:ring-blue-500 w-full sm:w-auto">
+                    <button id="addMovieButton"
+                        class="!rounded-button bg-custom px-4 py-2 font-semibold hover:bg-custom/90 transition-colors">
+                        <i class="fas fa-plus mr-2"></i>Add Movie
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hidden on smaller screens, visible on larger screens -->
+    <input id="imageUpload" type="file" accept="image/*" class="hidden" />
+
+    <header class="relative pt-24 pb-32 overflow-hidden">
+        <div class="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col lg:flex-row items-center gap-12">
+                <div class="flex-1">
+                    <h1 class="text-5xl font-bold mb-6 font-playfair">Our Personal Movie Journey</h1>
+                    <p class="text-xl text-gray-400 mb-8">Every Tuesday night is a new adventure.</p>
+                    <div class="flex gap-4">
+                        <button id="latestMoviesButton" class="!rounded-button bg-custom px-6 py-3 font-semibold hover:bg-custom/90 transition-colors w-full sm:w-auto">
+                            <i class="fas fa-play mr-2"></i>Latest Movies
+                        </button>
+                        <button id="viewStatsButton" class="!rounded-button border border-gray-700 px-6 py-3 font-semibold hover:bg-gray-800 transition-colors w-full sm:w-auto">
+                            <i class="fas fa-chart-bar mr-2"></i>View Stats
+                        </button>
+                    </div>
+                </div>
+                <div class="flex-1 w-full lg:w-auto">
+                    <img src="Images/Hero2.jpg" alt="Hero" class="w-full h-auto">
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Add Movie Modal -->
+    <div id="addMovieModal" class="fixed inset-0 z-50 hidden overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+        <div class="flex items-end justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
+            <div class="fixed inset-0 transition-opacity bg-gray-500 bg-opacity-75" aria-hidden="true"></div>
+            <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">​</span>
+            <div class="inline-block px-4 pt-5 pb-4 overflow-hidden text-left align-bottom transition-all transform bg-white rounded-lg shadow-xl sm:my-8 sm:align-middle sm:max-w-lg sm:w-full sm:p-6 dark:bg-gray-800">
+                <div>
+                    <div class="mx-auto flex items-center justify-center w-12 h-12 rounded-full bg-green-100 dark:bg-green-900">
+                        <svg class="w-6 h-6 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                        </svg>
+                    </div>
+                    <div class="mt-3 text-center sm:mt-5">
+                        <h3 class="text-lg font-medium leading-6 text-gray-900 dark:text-white" id="modal-title">
+                            Add New Movie
+                        </h3>
+                        <div class="mt-2">
+                            <input type="text" id="movieTitle" placeholder="Movie Title" class="w-full px-3 py-2 mt-2 text-gray-700 bg-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-300">
+                            <select id="movieGenre" class="w-full px-3 py-2 mt-2 text-gray-700 bg-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-300">
+                                <option value="">Select Genre</option>
+                                <option value="action">Action</option>
+                                <option value="comedy">Comedy</option>
+                                <option value="drama">Drama</option>
+                                <option value="fantasy">Fantasy</option>
+                                <option value="horror">Horror</option>
+                                <option value="romance">Romance</option>
+                                <option value="thriller">Thriller</option>
+                                <option value="scifi">Sci-Fi</option>
+                                <!-- Add more genres as needed -->
+                            </select>
+                            <div id="dropArea" class="w-full">
+                                Drag and drop your image here or click to upload
+                                <input id="imageUpload" type="file" accept="image/*" style="display: none;" />
+                            </div>
+                            <img id="imagePreview" src="#" alt="Image Preview" style="display: none; width: 100%; margin-top: 10px;">
+                            <input type="text" id="movieImageURL" placeholder="Or enter image URL" class="w-full px-3 py-2 mt-2 text-gray-700 bg-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-300">
+                            <div class="mt-4">
+                                <label for="movieRating" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Rating</label>
+                                <div class="flex items-center mt-2 rating-stars">
+                                    <i class="fas fa-star text-gray-400 cursor-pointer hover:text-yellow-500" data-rating="1"></i>
+                                    <i class="fas fa-star text-gray-400 cursor-pointer hover:text-yellow-500" data-rating="2"></i>
+                                    <i class="fas fa-star text-gray-400 cursor-pointer hover:text-yellow-500" data-rating="3"></i>
+                                    <i class="fas fa-star text-gray-400 cursor-pointer hover:text-yellow-500" data-rating="4"></i>
+                                    <i class="fas fa-star text-gray-400 cursor-pointer hover:text-yellow-500" data-rating="5"></i>
+                                </div>
+                                <input type="hidden" id="movieRating" value="0">
+                            </div>
+                            <div class="mt-4">
+                                <label for="movieDate" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Date Watched</label>
+                                <div class="flex items-center mt-2">
+                                    <input type="checkbox" id="todayCheckbox" class="mr-2">
+                                    <label for="todayCheckbox" class="text-sm text-gray-700 dark:text-gray-300">Today</label>
+                                </div>
+                                <input type="date" id="movieDate" class="w-full px-3 py-2 mt-2 text-gray-700 bg-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-300" disabled>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-5 sm:mt-6">
+                    <button type="button" id="confirmAddMovie" class="inline-flex justify-center w-full px-4 py-2 text-base font-medium text-white bg-blue-600 border border-transparent rounded-md shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:text-sm">
+                        Add Movie
+                    </button>
+                    <button type="button" id="cancelAddMovie" class="inline-flex justify-center w-full px-4 py-2 mt-3 text-base font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:text-sm dark:bg-gray-700 dark:border-gray-500 dark:text-gray-300 dark:hover:bg-gray-600">
+                        Cancel
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <section class="py-16 bg-gray-800/50">
+        <div class="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 class="text-3xl font-bold mb-12 text-center font-playfair">Your Movie Collection</h2>
+            <!-- Responsive grid for movie cards -->
+            <div id="movieCollection" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                <!-- Movie cards will be added here -->
+            </div>
+        </div>
+    </section>
+
+    <section class="py-16">
+        <div class="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 class="text-3xl font-bold mb-12 text-center font-playfair">Movie Timeline</h2>
+            <!-- Timeline made horizontal on smaller screens -->
+            <div class="relative overflow-x-auto pb-8">
+                <div id="movieTimeline" class="flex flex-nowrap space-x-8 min-w-max overflow-x-auto">
+                    <!-- Timeline items will be added here -->
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="py-16 bg-gray-800/50">
+        <div class="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 class="text-3xl font-bold mb-12 text-center font-playfair">Quick Stats</h2>
+            <!-- Stats grid made responsive -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="bg-gray-900 p-8 rounded-lg text-center">
+                    <i class="fas fa-film text-4xl text-custom mb-4"></i>
+                    <h3 id="totalMovies" class="text-2xl font-bold mb-2">0</h3>
+                    <p class="text-gray-400">Movies Watched</p>
+                </div>
+                <div class="bg-gray-900 p-8 rounded-lg text-center">
+                    <i class="fas fa-theater-masks text-4xl text-custom mb-4"></i>
+                    <h3 id="totalGenres" class="text-2xl font-bold mb-2">0</h3>
+                    <p class="text-gray-400">Genres Explored</p>
+                </div>
+                <div class="bg-gray-900 p-8 rounded-lg text-center">
+                    <i class="fas fa-calendar-check text-4xl text-custom mb-4"></i>
+                    <h3 id="consecutiveTuesdays" class="text-2xl font-bold mb-2">0</h3>
+                    <p class="text-gray-400">Consecutive Tuesdays</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="bg-gray-900 border-t border-gray-800 py-12">
+        <!-- Footer content centered -->
+        <div class="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col items-center">
+                <img src="Images/TMLogo.svg" alt="Logo"
+                    class="h-12 w-auto mb-6">
+                <div class="flex space-x-6 mb-6">
+                    <!-- Social icons adjust to wrap on smaller screens -->
+                    <a href="#" class="text-gray-400 hover:text-white transition-colors" title="Twitter">
+                        <i class="fab fa-twitter text-xl"></i>
+                    </a>
+                    <a href="#" class="text-gray-400 hover:text-white transition-colors" title="Instagram">
+                        <i class="fab fa-instagram text-xl"></i>
+                    </a>
+                    <a href="#" class="text-gray-400 hover:text-white transition-colors" title="GitHub">
+                        <i class="fab fa-github text-xl"></i>
+                    </a>
+                </div>
+                <p class="text-gray-400 text-sm">© 2024 Tuesday Movies. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Back to Top Button - No changes needed -->
+    <button id="backToTop" title="Back to Top"
+        class="fixed bottom-8 right-8 bg-custom w-12 h-12 rounded-full flex items-center justify-center shadow-lg hover:bg-custom/90 transition-colors opacity-0 invisible transition-opacity duration-300">
+        <i class="fas fa-arrow-up"></i>
+    </button>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
